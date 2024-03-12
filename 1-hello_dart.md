@@ -15,18 +15,17 @@ To simulate a world in DART you need the class `World`.
 Have a look at this class in DART's API documentation to see its various functionalities.
 To creat a world you need:
 ```py
-    auto world = simulation::World::create();
+    world = dart.simulation.World()
 ```
 
 In order to visualize a wolrd in OpenSceneGraph we need to wrap our world in a `WorldNode`.
 You can do this with:
-```cpp
-    osg::ref_ptr<gui::osg::RealTimeWorldNode> node
-      = new gui::osg::RealTimeWorldNode(world);
+```py
+    node = dart.gui.osg.RealTimeWorldNode(world)
 ``` 
 We can then pass our world to the Viewer with:
-```cpp    
-    viewer.addWorldNode(node);
+```py
+    viewer.addWorldNode(node)
 ``` 
 Create a world and pass it to the viewer.
 Run the program to see an empty simulation window again...
@@ -38,33 +37,33 @@ Every Joint has a child BodyNode, and every BodyNode has a parent Joint.
 Even the root BodyNode has a Joint that attaches it to the World. 
 To create a Skeleton we can use 
 
-```cpp  
-    auto skeleton = dynamics::Skeleton::create();
+```py
+    skeleton = dart.dynamics.Skeleton()
 ```
 which gives us a `SkeltonPtr` to an emty Skeleton.
 
 To create joint in our Skeleton we can use the function `createJointAndBodyNodePair<JointType>()`
-```cpp
-    auto jointAndBody = skeleton->createJointAndBodyNodePair<dynamics::FreeJoint>();
+```py
+    jointAndBody = skeleton.createFreeJointAndBodyNodePair()
 ```
 which gives us a pair of pointers, where the first pointer points to the Joint, and the second pointer points to the body.
-```cpp
-    auto body = jointAndBody.second;
+```py
+    body = jointAndBody[1]
 ```
 Note that our body is only a BodyNode up to now with no physical parameters yet. 
 In order to set physical parameters such as mass or the geometrical shape of the body DART offers a 'Shape' class.
-```cpp
-    auto shape = std::make_shared<dynamics::BoxShape>(Eigen::Vector3d(0.3, 0.3, 0.3));
+```py
+    shape = dart.dynamics.BoxShape([0.3,0.3,0.3])
 ```
 To append a Shape to our body node we can create a 'ShapeNode' with invoking `createShapeNodeWith<ShapeType>()` on our BodyNode.
-```cpp 
-    body->createShapeNodeWith<
-      dynamics::VisualAspect,
-      dynamics::CollisionAspect,
-      dynamics::DynamicsAspect>(shape);
+```py
+    shapenode = body.getShapeNode(0)
+    shapenode.createVisualAspect()
+    shapenode.createCollisionAspect()
+    shapenode.createDynamicsAspect()
 ```
 Remeber to add the scelton we created to our world.
-```cpp
-    world->addSkeleton(skeleton);
+```py
+    world.addSkeleton(skeleton)
 ```
 Now you can give it a try!
